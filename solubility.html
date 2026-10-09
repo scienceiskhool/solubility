@@ -1,467 +1,589 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Solubility Master</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { 
-            font-family: 'Inter', sans-serif; 
-            overflow-x: hidden;
-            touch-action: manipulation;
-        }
-        @keyframes pop-in { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        @keyframes confetti-fall { 
-            0% { top: -10%; transform: translateX(0) rotate(0deg); opacity: 1; }
-            100% { top: 110%; transform: translateX(20px) rotate(360deg); opacity: 0; } 
-        }
-        .animate-pop-in { animation: pop-in 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.2) both; }
-        .animate-float { animation: float 5s ease-in-out infinite; }
-        .animate-confetti-fall { animation: confetti-fall 4s linear infinite; }
-        .hidden { display: none; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#069494">
+<title>Solubility Master · Science is Khool</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Science is Khool · Tropical Punch — "Arcade Punch" game skin */
+:root {
+  --orange: #FF8243; --pink: #FFC0CB; --yellow: #FCE883; --teal: #069494; --teal-ink: #057A7A;
+  --orange-tint: #FFE6DA; --pink-tint: #FFEEF1; --yellow-tint: #FEF8D9; --teal-tint: #DDF2F2;
+  --ink: #1F2A2E; --muted: #56656A; --line: #E4E8E9; --bg: #FFFFFF;
+  --good: #1E9E62; --good-tint: #D8F3E4; --bad: #E2463A;
+  --b: 3px solid var(--ink);
+  --font: "Open Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 16px/1.5 var(--font); min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column; touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
+button, input, select { font: inherit; color: inherit; }
+button { cursor: pointer; }
+[hidden] { display: none !important; }
+.sub { font-size: .65em; position: relative; bottom: -.25em; line-height: 0; }
+:focus-visible { outline: 3px solid var(--orange); outline-offset: 2px; }
 
-        /* Fullscreen-specific adjustments */
-        :fullscreen #game-container {
-            background-color: #f8fafc;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-    </style>
+.wrap { width: 100%; max-width: 1040px; margin: 0 auto; padding: 16px; flex: 1; display: flex; flex-direction: column; }
+.card { background: #fff; border: var(--b); border-radius: 22px; box-shadow: 6px 6px 0 var(--ink); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: var(--b); border-radius: 16px; padding: 14px 18px; font-weight: 800; font-size: 1.1rem; background: var(--orange); color: var(--ink); box-shadow: 0 5px 0 var(--ink); transition: transform .08s, box-shadow .08s; user-select: none; -webkit-user-select: none; }
+.btn:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.big { width: 100%; font-size: 1.12rem; text-transform: uppercase; letter-spacing: .03em; padding: 15px; }
+.btn.alt { background: #fff; } .btn.teal { background: var(--teal); color: #fff; } .btn.small { padding: 8px 14px; font-size: .95rem; box-shadow: 0 3px 0 var(--ink); }
+.pill { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 99px; padding: 2px 10px; background: #fff; color: var(--ink); }
+.icon-btn { width: 42px; height: 42px; border-radius: 12px; border: var(--b); background: #fff; display: grid; place-items: center; box-shadow: 0 3px 0 var(--ink); padding: 0; flex: none; }
+.icon-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--ink); }
+.icon-btn svg { width: 20px; height: 20px; } .icon-btn.off { opacity: .45; }
+
+.topbar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 2px solid var(--line); background: #fff; }
+.topbar .brand { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; text-decoration: none; color: var(--ink); }
+.topbar .brand img { width: 38px; height: 38px; border-radius: 50%; border: 2.5px solid var(--ink); background: var(--yellow); object-fit: cover; flex: none; }
+.topbar .brand > span { min-width: 0; }
+.topbar .brand b { font-weight: 800; font-size: 1.05rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+.topbar .brand small { display: block; font-size: .72rem; color: var(--muted); font-weight: 600; line-height: 1.2; }
+
+/* rules list */
+.rules { display: flex; flex-direction: column; gap: 8px; }
+.rule { display: flex; gap: 10px; align-items: flex-start; padding: 9px 12px; border: 2.5px solid var(--ink); border-radius: 14px; font-weight: 700; font-size: .95rem; line-height: 1.35; }
+.rule i { flex: none; font-style: normal; font-size: .7rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; border: 2px solid var(--ink); border-radius: 99px; padding: 0 7px; background: #fff; margin-top: 1px; }
+.rule.s { background: var(--teal-tint); } .rule.m { background: var(--yellow-tint); } .rule.i { background: var(--orange-tint); }
+
+/* start */
+.start { display: grid; gap: 22px; grid-template-columns: 1fr; align-items: start; margin: auto 0; padding-block: 8px 20px; }
+.hero { background: var(--teal); color: #fff; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+.hero h1 { margin: 4px 0 0; font-size: clamp(1.9rem, 6.5vw, 2.8rem); line-height: 1.08; font-weight: 800; }
+.hero h1 em { font-style: normal; background: var(--yellow); color: var(--ink); border: var(--b); border-radius: 14px; padding: 0 10px; display: inline-block; transform: rotate(-2deg); }
+.hero p { margin: 0; font-weight: 600; max-width: 40ch; }
+.hero .rules { color: var(--ink); }
+.form { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+.form h2 { margin: 0; font-size: 1.25rem; font-weight: 800; }
+.fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.fields .full { grid-column: 1 / -1; }
+label.f { display: flex; flex-direction: column; gap: 4px; font-weight: 700; font-size: .9rem; }
+label.f input, label.f select { font-size: 16px; padding: 12px; border: 2.5px solid var(--ink); border-radius: 12px; background: #fff; width: 100%; min-width: 0; }
+label.f input:focus, label.f select:focus { outline: 3px solid var(--yellow); outline-offset: 1px; }
+.form-err { color: var(--bad); font-weight: 700; font-size: .9rem; min-height: 1.2em; margin: -4px 0 0; }
+.how { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.how div { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; font-weight: 700; font-size: .9rem; }
+.how div:first-child { background: var(--teal-tint); } .how div:last-child { background: var(--orange-tint); text-align: right; }
+.how b { display: block; font-size: 1.05rem; }
+.best { display: flex; justify-content: space-between; font-size: .9rem; color: var(--muted); font-weight: 700; } .best b { color: var(--ink); }
+@media (min-width: 760px) { .start { grid-template-columns: 1.1fr 1fr; gap: 28px; } }
+
+/* play */
+.play { display: grid; grid-template-columns: 1fr; border: var(--b); border-radius: 22px; overflow: hidden; box-shadow: 6px 6px 0 var(--ink); background: #fff; margin-block: 4px 16px; }
+.hud { background: var(--teal); color: #fff; padding: 14px; display: flex; flex-direction: column; gap: 10px; border-bottom: var(--b); }
+.row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.score { font-size: 1.9rem; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.score small { display: block; font-size: .66rem; letter-spacing: .1em; text-transform: uppercase; opacity: .9; margin-bottom: 2px; }
+.badges { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.combo { background: var(--yellow); color: var(--ink); font-weight: 800; border: var(--b); border-radius: 10px; padding: 2px 10px; transform: rotate(-3deg); box-shadow: 2px 2px 0 var(--ink); white-space: nowrap; }
+.combo.pop { animation: pop .35s ease-out; } @keyframes pop { 0% { scale: .6; } 70% { scale: 1.15; } 100% { scale: 1; } }
+.combo-bar { width: 70px; height: 8px; border: 2px solid var(--ink); border-radius: 99px; background: #fff; overflow: hidden; }
+.combo-bar i { display: block; height: 100%; width: 0; background: var(--orange); transition: width .25s; }
+.qtime { flex: 1; height: 12px; border: 2px solid var(--ink); border-radius: 99px; background: #fff; overflow: hidden; }
+.qtime i { display: block; height: 100%; width: 100%; background: var(--orange); } .qtime i.warn { background: var(--bad); }
+.secs { font-weight: 800; font-size: 1rem; font-variant-numeric: tabular-nums; min-width: 2.6em; text-align: right; }
+.paused { font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; background: var(--yellow); color: var(--ink); border: 2px solid var(--ink); border-radius: 99px; padding: 0 8px; }
+.bins { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.bin { background: rgba(255,255,255,.14); border: 2.5px solid var(--ink); border-radius: 14px; padding: 6px 8px; min-height: 92px; max-height: 150px; overflow-y: auto; }
+.bin h4 { margin: 0 0 4px; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #fff; display: flex; justify-content: space-between; }
+.bin .tag { display: inline-block; font-size: .78rem; font-weight: 700; background: #fff; color: var(--ink); border: 2px solid var(--ink); border-radius: 99px; padding: 0 8px; margin: 0 4px 4px 0; }
+.bin .tag.x { background: var(--orange-tint); text-decoration: line-through; }
+
+.controls { padding: 16px; display: flex; flex-direction: column; gap: 14px; position: relative; }
+.arena { position: relative; min-height: 230px; display: grid; place-items: center; touch-action: pan-y; }
+.side { position: absolute; top: 50%; translate: 0 -50%; font-weight: 800; font-size: .8rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); writing-mode: vertical-rl; transition: color .15s, scale .15s; }
+.side.l { left: 0; rotate: 180deg; } .side.r { right: 0; }
+.side.hot.l { color: var(--teal-ink); scale: 1.15; } .side.hot.r { color: var(--orange); scale: 1.15; }
+.scard { position: relative; z-index: 2; width: min(100% - 52px, 380px); border: var(--b); border-radius: 22px; background: var(--yellow-tint); box-shadow: 0 6px 0 var(--ink); padding: 22px 16px; text-align: center; cursor: grab; user-select: none; -webkit-user-select: none; touch-action: none; will-change: transform; }
+.scard:active { cursor: grabbing; }
+.scard small { display: block; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.scard b { display: block; font-size: clamp(1.6rem, 6.5vw, 2.2rem); font-weight: 800; line-height: 1.15; margin-top: 6px; text-wrap: balance; }
+.scard .fml { display: block; font-size: 1.35rem; font-weight: 700; color: var(--teal-ink); margin-top: 4px; }
+.scard.tilt-l { background: var(--teal-tint); } .scard.tilt-r { background: var(--orange-tint); }
+.scard.fly { transition: transform .28s ease-in, opacity .28s; opacity: 0; }
+.scard.back { transition: transform .25s cubic-bezier(.2,1.4,.4,1); }
+.scard.shake { animation: shake .35s; } @keyframes shake { 25% { translate: -8px 0; } 75% { translate: 8px 0; } }
+.swipe-help { text-align: center; font-size: .82rem; color: var(--muted); font-weight: 600; margin: -4px 0 0; }
+.choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.choice { font-weight: 800; font-size: 1.15rem; padding: 16px 8px; border: var(--b); border-radius: 16px; box-shadow: 0 5px 0 var(--ink); text-transform: uppercase; letter-spacing: .03em; }
+.choice:active { transform: translateY(4px); box-shadow: 0 1px 0 var(--ink); }
+.choice.sol { background: var(--teal); color: #fff; } .choice.ins { background: var(--orange); color: var(--ink); }
+.choice small { display: block; font-size: .72rem; letter-spacing: .04em; opacity: .9; }
+.feedback { border: var(--b); border-radius: 16px; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: var(--orange-tint); }
+.feedback h3 { margin: 0; font-size: 1.2rem; font-weight: 800; }
+.feedback p { margin: 0; font-weight: 600; }
+.feedback .why { background: #fff; border: 2px solid var(--ink); border-radius: 12px; padding: 8px 12px; font-weight: 700; }
+.toast { position: absolute; left: 50%; top: 14px; translate: -50% 0; z-index: 5; font-weight: 800; padding: 4px 14px; border: var(--b); border-radius: 99px; background: var(--good-tint); pointer-events: none; animation: toast .7s ease-out forwards; }
+@keyframes toast { 0% { opacity: 0; translate: -50% 8px; } 25% { opacity: 1; translate: -50% 0; } 100% { opacity: 0; translate: -50% -14px; } }
+.rules-panel { border: var(--b); border-radius: 16px; padding: 12px; background: #fff; display: flex; flex-direction: column; gap: 10px; }
+.rules-panel h3 { margin: 0; font-size: 1.05rem; font-weight: 800; display: flex; justify-content: space-between; align-items: center; }
+@media (min-width: 760px) {
+  .play { grid-template-columns: .9fr 1.1fr; }
+  .hud { border-bottom: 0; border-right: var(--b); padding: 18px; }
+  .bin { min-height: 180px; max-height: 300px; }
+  .controls { padding: 20px; justify-content: center; }
+  .arena { min-height: 270px; }
+}
+
+/* results */
+.results { display: grid; gap: 18px; grid-template-columns: 1fr; padding-block: 8px 20px; }
+.res-hero { background: var(--teal); color: #fff; padding: 22px; display: flex; gap: 18px; align-items: center; }
+.big-ring { --p: 0; width: 120px; height: 120px; flex: none; border-radius: 50%; border: var(--b); background: conic-gradient(var(--yellow) calc(var(--p) * 1%), #fff 0); display: grid; place-items: center; }
+.big-ring span { width: 88px; height: 88px; border-radius: 50%; background: #fff; color: var(--ink); border: var(--b); display: grid; place-items: center; font-weight: 800; font-size: 1.7rem; }
+.res-hero h2 { margin: 0 0 4px; font-size: 1.6rem; line-height: 1.15; font-weight: 800; } .res-hero p { margin: 0; font-weight: 600; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.stat { border: var(--b); border-radius: 14px; padding: 8px 10px; box-shadow: 0 4px 0 var(--ink); }
+.stat span { display: block; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.stat b { font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.stat:nth-child(1) { background: var(--yellow-tint); } .stat:nth-child(2) { background: var(--pink-tint); } .stat:nth-child(3) { background: var(--teal-tint); } .stat:nth-child(4) { background: var(--orange-tint); }
+.panel { padding: 18px; display: flex; flex-direction: column; gap: 12px; } .panel h3 { margin: 0; font-size: 1.15rem; font-weight: 800; }
+.bars { display: flex; flex-direction: column; gap: 8px; }
+.bar-row { display: grid; grid-template-columns: 10.5em 1fr 3.2em; gap: 10px; align-items: center; font-weight: 700; font-size: .92rem; }
+.bar { height: 14px; border: 2px solid var(--ink); border-radius: 99px; overflow: hidden; background: #fff; }
+.bar i { display: block; height: 100%; background: var(--teal); } .bar i.low { background: var(--orange); }
+.bar-row .n { text-align: right; font-variant-numeric: tabular-nums; }
+.weak, .review { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.weak li { border: 2.5px solid var(--ink); border-radius: 14px; padding: 10px 12px; background: var(--orange-tint); }
+.weak li b { display: block; } .weak li span { font-size: .9rem; } .weak li.good { background: var(--good-tint); }
+.review li { border-bottom: 2px solid var(--line); padding: 6px 0 8px; font-size: .95rem; } .review li:last-child { border-bottom: 0; }
+.review .you { color: var(--bad); font-weight: 700; } .review .key { color: var(--good); font-weight: 800; }
+.send { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-weight: 700; padding: 12px 14px; border: 2.5px solid var(--ink); border-radius: 14px; background: var(--teal-tint); }
+.send.err { background: var(--orange-tint); }
+.res-actions { display: flex; gap: 12px; flex-wrap: wrap; } .res-actions .btn { flex: 1 1 200px; }
+@media (min-width: 760px) { .results { grid-template-columns: 1fr 1fr; align-items: start; } .results .span { grid-column: 1 / -1; } }
+@media (max-width: 480px) { .stats { grid-template-columns: repeat(2, 1fr); } .res-hero { flex-direction: column; text-align: center; } .bar-row { grid-template-columns: 8.6em 1fr 3em; font-size: .85rem; } }
+footer { text-align: center; color: var(--muted); font-size: .82rem; padding: 14px 16px 20px; }
+footer a { color: var(--teal-ink); font-weight: 700; }
+canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; }
+@media (prefers-reduced-motion: reduce) { .combo.pop, .scard.shake, .toast { animation: none !important; } .scard.fly, .scard.back { transition: none; } }
+</style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body>
+<header class="topbar">
+  <a class="brand" href="https://scienceiskhool.github.io/scienceiskhool/" target="_blank" rel="noopener">
+    <img src="https://scienceiskhool.github.io/scienceiskhool/assets/img/head.png" alt="" onerror="this.style.visibility='hidden'">
+    <span><b>Solubility Master</b><small>Science is Khool · Solubility rules</small></span>
+  </a>
+  <button class="icon-btn" id="btn-sound" type="button" aria-label="Sound effects" title="Sound effects">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19 5a10 10 0 0 1 0 14"/></svg>
+  </button>
+  <button class="icon-btn" id="btn-full" type="button" aria-label="Full screen" title="Full screen" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3M21 8V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3M16 21h3a2 2 0 0 0 2-2v-3"/></svg>
+  </button>
+</header>
 
-    <div id="confetti-container" class="fixed inset-0 pointer-events-none z-[999] hidden"></div>
-
-    <div id="game-container" class="min-h-screen p-4 md:p-6 lg:p-8 relative flex flex-col transition-all duration-300">
-        
-        <!-- Top Toolbar (Always Visible) -->
-        <div class="fixed top-4 right-4 z-[110] flex gap-2">
-            <button onclick="toggleFullscreen()" class="p-3 bg-white/80 backdrop-blur shadow-md rounded-2xl text-slate-600 hover:text-indigo-600 border border-slate-200 transition-all active:scale-95" title="Toggle Fullscreen">
-                <i data-lucide="maximize" class="w-5 h-5" id="fs-icon"></i>
-            </button>
-            <button onclick="toggleMute()" id="mute-btn" class="p-3 bg-white/80 backdrop-blur shadow-md rounded-2xl text-slate-600 hover:text-indigo-600 border border-slate-200 transition-all active:scale-95">
-                <i data-lucide="volume-2" class="w-5 h-5"></i>
-            </button>
-        </div>
-
-        <!-- Rules Modal (Hint) -->
-        <div id="rules-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] flex items-center justify-center p-4 hidden">
-            <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 md:p-8 animate-pop-in border border-slate-100 overflow-y-auto max-h-[90vh]">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black text-slate-800 flex items-center gap-2">
-                        <i data-lucide="book-open" class="text-indigo-600"></i> Solubility Rules
-                    </h3>
-                    <button onclick="toggleRules(false)" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
-                        <i data-lucide="x" class="w-6 h-6 text-slate-400"></i>
-                    </button>
-                </div>
-                <div id="rules-modal-list" class="space-y-3"></div>
-                <button onclick="toggleRules(false)" class="w-full mt-8 py-4 bg-slate-800 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-all">CLOSE HINT</button>
-            </div>
-        </div>
-
-        <!-- Start Screen -->
-        <div id="start-screen" class="flex-1 flex items-center justify-center py-12">
-            <div class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-6 md:p-8 border border-slate-100 animate-pop-in text-center relative mx-auto">
-                <div class="inline-block p-4 bg-indigo-100 rounded-full mb-4 animate-float">
-                    <i data-lucide="beaker" class="w-10 h-10 text-indigo-600"></i>
-                </div>
-                <h1 class="text-3xl font-black text-slate-800 leading-tight">Solubility Master</h1>
-                <p class="text-indigo-500 font-bold text-xs uppercase tracking-widest mb-2">created by Ms Khoo Xiang Yun</p>
-                <p class="text-slate-500 mb-6 text-sm">Memorize the rules to master the salts!</p>
-                <div id="start-rules-list" class="space-y-2 mb-8 text-left max-h-[30vh] overflow-y-auto pr-2"></div>
-                <button onclick="startGame()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-95 flex items-center justify-center gap-2">
-                    <i data-lucide="play" fill="currentColor"></i> START CHALLENGE
-                </button>
-            </div>
-        </div>
-
-        <!-- Playing Screen -->
-        <div id="playing-screen" class="max-w-4xl mx-auto w-full hidden flex-1 flex flex-col justify-center">
-            <div class="flex flex-wrap justify-between items-center mb-6 bg-white/80 backdrop-blur p-4 rounded-2xl shadow-sm border border-slate-100 gap-4">
-                <div class="flex items-center gap-4 sm:gap-6">
-                    <div id="timer-display" class="flex items-center gap-2 font-mono text-xl sm:text-2xl font-black text-slate-700">
-                        <i data-lucide="timer" class="w-5 h-5 sm:w-6 sm:h-6"></i> <span id="time-left">60</span>
-                    </div>
-                    <div class="h-8 w-px bg-slate-200"></div>
-                    <div>
-                        <div class="text-[10px] font-black text-slate-400 uppercase leading-none mb-1">Score</div>
-                        <div id="points-display" class="text-lg sm:text-xl font-black text-indigo-600 leading-none">0</div>
-                    </div>
-                    
-                    <div id="multiplier-badge" class="hidden sm:flex items-center gap-2 px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full border border-indigo-200 shadow-sm transition-all duration-300">
-                        <i data-lucide="zap" class="w-3 h-3" fill="currentColor"></i>
-                        <div class="flex flex-col">
-                            <span id="multiplier-text" class="text-[10px] font-black leading-none">1.0x</span>
-                            <div class="w-16 h-1 bg-indigo-300/30 rounded-full mt-1 overflow-hidden">
-                                <div id="multiplier-progress" class="h-full bg-indigo-600 transition-all duration-300" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <button onclick="toggleRules(true)" class="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-black transition-all">
-                        <i data-lucide="lightbulb" class="w-4 h-4"></i> HINT
-                    </button>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 md:p-12 rounded-3xl shadow-xl border border-slate-100 text-center relative min-h-[350px] md:min-h-[420px] flex flex-col justify-center overflow-hidden">
-                <!-- Feedback Overlays -->
-                <div id="feedback-correct" class="absolute inset-0 flex flex-col items-center justify-center bg-white/90 z-30 hidden animate-pop-in">
-                    <div class="bg-green-100 p-6 rounded-full mb-4 shadow-inner">
-                        <i data-lucide="check-circle" class="w-16 h-16 text-green-600"></i>
-                    </div>
-                    <h2 id="correct-msg" class="text-3xl font-black text-green-700 mb-1">Dissolved!</h2>
-                    <p class="text-green-600 font-bold uppercase tracking-widest text-sm">Correct Identification</p>
-                </div>
-
-                <div id="feedback-wrong" class="absolute inset-0 flex flex-col items-center justify-center bg-white/95 z-30 hidden animate-pop-in p-6">
-                    <div class="bg-red-100 p-6 rounded-full mb-4 shadow-inner">
-                        <i data-lucide="x-circle" class="w-12 h-12 md:w-16 md:h-16 text-red-600"></i>
-                    </div>
-                    <h2 class="text-2xl font-black text-red-700 mb-4">Incorrect</h2>
-                    <div class="w-full max-w-sm p-4 md:p-6 bg-slate-50 rounded-2xl border border-slate-200 text-left mb-6 shadow-sm">
-                        <div class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Scientific Rule</div>
-                        <p id="rule-explanation" class="text-slate-700 font-bold italic text-base md:text-lg leading-relaxed"></p>
-                    </div>
-                    <button onclick="nextQuestion()" class="w-full max-w-sm py-4 bg-slate-800 text-white rounded-2xl font-black text-lg flex items-center justify-center gap-2 shadow-xl active:scale-95">
-                        GOT IT <i data-lucide="arrow-right"></i>
-                    </button>
-                </div>
-
-                <div id="question-content">
-                    <span class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 mb-4 block animate-pulse">Identify Solubility</span>
-                    <h2 id="salt-name" class="text-3xl md:text-5xl font-black text-slate-800 mb-2 lowercase"></h2>
-                    <div id="salt-formula" class="text-indigo-600 text-xl md:text-2xl font-bold mb-8 md:mb-12 opacity-80"></div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto w-full">
-                        <button onclick="handleGuess(true)" class="py-5 md:py-6 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-black text-lg md:text-xl shadow-lg transition-all active:scale-95 border-b-4 border-blue-800">SOLUBLE</button>
-                        <button onclick="handleGuess(false)" class="py-5 md:py-6 bg-orange-600 hover:bg-orange-700 text-white rounded-2xl font-black text-lg md:text-xl shadow-lg transition-all active:scale-95 border-b-4 border-orange-800">INSOLUBLE</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- History Logs (Hidden on small mobile height to save space, visible on iPad/Desktop) -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4 h-40 sm:h-48">
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                    <div class="p-2 bg-blue-50 border-b border-blue-100 text-center font-black text-blue-700 text-[10px] uppercase tracking-widest">Soluble Findings</div>
-                    <div id="history-soluble" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
-                </div>
-                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden flex flex-col">
-                    <div class="p-2 bg-orange-50 border-b border-orange-100 text-center font-black text-orange-700 text-[10px] uppercase tracking-widest">Insoluble Findings</div>
-                    <div id="history-insoluble" class="flex-1 overflow-y-auto p-2 space-y-1"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Result Screen -->
-        <div id="result-screen" class="min-h-screen flex items-center justify-center hidden p-4">
-            <div class="max-w-2xl w-full bg-white rounded-3xl shadow-2xl p-6 md:p-10 text-center border border-slate-100 animate-pop-in">
-                <i id="result-icon" data-lucide="trophy" class="w-16 h-16 md:w-24 md:h-24 mx-auto mb-4 text-amber-500"></i>
-                <h2 id="result-title" class="text-3xl md:text-4xl font-black text-slate-800 mb-2">Phenomenal!</h2>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 md:gap-4 mb-8 mt-6">
-                    <div class="bg-indigo-50 p-4 md:p-6 rounded-2xl">
-                        <div id="final-points" class="text-indigo-600 text-2xl md:text-3xl font-black">0</div>
-                        <div class="text-indigo-400 text-[10px] font-bold uppercase">Points</div>
-                    </div>
-                    <div class="bg-slate-50 p-4 md:p-6 rounded-2xl">
-                        <div id="final-accuracy" class="text-slate-600 text-2xl md:text-3xl font-black">0%</div>
-                        <div class="text-slate-400 text-[10px] font-bold uppercase">Accuracy</div>
-                    </div>
-                    <div class="bg-amber-50 p-4 md:p-6 rounded-2xl col-span-2 sm:col-span-1">
-                        <div id="best-score-display" class="text-amber-600 text-2xl md:text-3xl font-black">0</div>
-                        <div class="text-amber-400 text-[10px] font-bold uppercase">Best Score</div>
-                    </div>
-                </div>
-                <button onclick="location.reload()" class="w-full sm:w-auto px-12 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold text-lg shadow-lg active:scale-95 transition-all">Play Again</button>
-            </div>
-        </div>
+<main class="wrap">
+  <!-- START -->
+  <section id="scr-start" class="start">
+    <div class="card hero">
+      <span class="pill" style="align-self:flex-start">Chemistry · Salts</span>
+      <h1>Solubility <em>Master</em></h1>
+      <p>Learn the rules, then sort as many compounds as you can in 60 seconds.</p>
+      <div class="rules" id="rules-start"></div>
     </div>
+    <form class="card form" id="form-start" novalidate>
+      <h2>Sign in to play</h2>
+      <div class="fields">
+        <label class="f full" for="in-name">Name<input id="in-name" maxlength="60" autocomplete="name" required></label>
+        <label class="f" for="in-cls">Class<select id="in-cls" required><option value="">Choose…</option></select></label>
+        <label class="f" for="in-reg">Register no.<input id="in-reg" inputmode="numeric" pattern="[0-9]*" maxlength="2" required></label>
+      </div>
+      <div class="how"><div><b>← Soluble</b>Swipe left or tap</div><div><b>Insoluble →</b>Swipe right or tap</div></div>
+      <p class="form-err" id="form-err" role="alert"></p>
+      <button class="btn big" type="submit">Start 60-second challenge ▶</button>
+      <div class="best"><span>Your best points on this device</span><b id="txt-best">0</b></div>
+    </form>
+  </section>
 
-    <script>
-        const saltsData = [
-            { name: "sodium nitrate", formula: "(NaNO₃)", soluble: true, rule: "All Group 1 and Nitrate salts are soluble." },
-            { name: "silver chloride", formula: "(AgCl)", soluble: false, rule: "Chlorides are soluble EXCEPT silver and lead(II)." },
-            { name: "potassium carbonate", formula: "(K₂CO₃)", soluble: true, rule: "All Group 1 salts are soluble." },
-            { name: "barium sulfate", formula: "(BaSO₄)", soluble: false, rule: "Sulfates are soluble EXCEPT barium, calcium, and lead(II)." },
-            { name: "ammonium phosphate", formula: "((NH₄)₃PO₄)", soluble: true, rule: "All ammonium salts are soluble." },
-            { name: "lead(II) chloride", formula: "(PbCl₂)", soluble: false, rule: "Chlorides are soluble EXCEPT silver and lead(II)." },
-            { name: "magnesium hydroxide", formula: "(Mg(OH)₂)", soluble: true, rule: "Magnesium hydroxide is sparingly soluble." },
-            { name: "calcium sulfate", formula: "(CaSO₄)", soluble: false, rule: "Sulfates are soluble EXCEPT barium, calcium, and lead(II)." },
-            { name: "copper(II) sulfate", formula: "(CuSO₄)", soluble: true, rule: "Most sulfates are soluble." },
-            { name: "iron(III) nitrate", formula: "(Fe(NO₃)₃)", soluble: true, rule: "All nitrates are soluble." },
-            { name: "zinc carbonate", formula: "(ZnCO₃)", soluble: false, rule: "Carbonates are generally insoluble." },
-            { name: "lithium hydroxide", formula: "(LiOH)", soluble: true, rule: "Group 1 hydroxides are soluble." },
-            { name: "silver nitrate", formula: "(AgNO₃)", soluble: true, rule: "All nitrates are soluble." },
-            { name: "lead(II) sulfate", formula: "(PbSO₄)", soluble: false, rule: "Sulfates are soluble EXCEPT barium, calcium, and lead(II)." },
-            { name: "calcium nitrate", formula: "(Ca(NO₃)₂)", soluble: true, rule: "All nitrates are soluble." },
-            { name: "aluminum oxide", formula: "(Al₂O₃)", soluble: false, rule: "Oxides are generally insoluble." },
-            { name: "sodium hydroxide", formula: "(NaOH)", soluble: true, rule: "Group 1 hydroxides are soluble." },
-            { name: "magnesium sulfate", formula: "(MgSO₄)", soluble: true, rule: "Most sulfates are soluble." },
-            { name: "calcium carbonate", formula: "(CaCO₃)", soluble: false, rule: "Carbonates are generally insoluble." },
-            { name: "potassium iodide", formula: "(KI)", soluble: true, rule: "All Group 1 salts are soluble." },
-            { name: "lead(II) nitrate", formula: "(Pb(NO₃)₂)", soluble: true, rule: "All nitrates are soluble." },
-            { name: "ammonium carbonate", formula: "((NH₄)₂CO₃)", soluble: true, rule: "Ammonium salts are always soluble." },
-            { name: "potassium sulfate", formula: "(K₂SO₄)", soluble: true, rule: "Most sulfates are soluble." },
-            { name: "copper(II) carbonate", formula: "(CuCO₃)", soluble: false, rule: "Carbonates are generally insoluble." },
-            { name: "barium chloride", formula: "(BaCl₂)", soluble: true, rule: "Chlorides are generally soluble." },
-            { name: "silver sulfate", formula: "(Ag₂SO₄)", soluble: true, rule: "Silver sulfate has low/partial solubility." },
-            { name: "zinc sulfate", formula: "(ZnSO₄)", soluble: true, rule: "Most sulfates are soluble." },
-            { name: "iron(II) sulfate", formula: "(FeSO₄)", soluble: true, rule: "Most sulfates are soluble." },
-            { name: "sodium oxide", formula: "(Na₂O)", soluble: true, rule: "Group 1 oxides form soluble hydroxides." },
-            { name: "magnesium chloride", formula: "(MgCl₂)", soluble: true, rule: "Chlorides are generally soluble." },
-            { name: "lead(II) oxide", formula: "(PbO)", soluble: false, rule: "Oxides are generally insoluble." },
-            { name: "calcium hydroxide", formula: "(Ca(OH)₂)", soluble: true, rule: "Calcium hydroxide is sparingly soluble." },
-            { name: "ammonium sulfate", formula: "((NH₄)₂SO₄)", soluble: true, rule: "All ammonium salts are soluble." },
-            { name: "zinc oxide", formula: "(ZnO)", soluble: false, rule: "Oxides are generally insoluble." },
-            { name: "copper(II) chloride", formula: "(CuCl₂)", soluble: true, rule: "Chlorides are generally soluble." },
-            { name: "lithium nitrate", formula: "(LiNO₃)", soluble: true, rule: "All nitrates are soluble." },
-            { name: "magnesium carbonate", formula: "(MgCO₃)", soluble: false, rule: "Carbonates are generally insoluble." },
-            { name: "iron(III) chloride", formula: "(FeCl₃)", soluble: true, rule: "Chlorides are generally soluble." },
-            { name: "sodium phosphate", formula: "(Na₃PO₄)", soluble: true, rule: "All Group 1 salts are soluble." },
-            { name: "barium nitrate", formula: "(Ba(NO₃)₂)", soluble: true, rule: "All nitrates are soluble." }
-        ];
+  <!-- PLAY -->
+  <section id="scr-play" class="play" hidden>
+    <div class="hud">
+      <div class="row">
+        <div class="score"><small>Points</small><span id="txt-points">0</span></div>
+        <div class="badges"><span class="combo" id="txt-combo">1.0×</span><div class="combo-bar" aria-hidden="true"><i id="bar-combo"></i></div></div>
+      </div>
+      <div class="row"><div class="qtime"><i id="bar-time"></i></div><span class="paused" id="txt-paused" hidden>Paused</span><span class="secs" id="txt-secs">60s</span></div>
+      <div class="bins">
+        <div class="bin"><h4><span>Soluble</span><span id="n-sol">0</span></h4><div id="bin-sol"></div></div>
+        <div class="bin"><h4><span>Insoluble</span><span id="n-ins">0</span></h4><div id="bin-ins"></div></div>
+      </div>
+    </div>
+    <div class="controls">
+      <div id="play-main">
+        <div class="arena" id="arena">
+          <span class="side l" id="side-l">Soluble</span>
+          <div class="scard" id="scard" role="group" aria-live="polite"><small>Soluble or insoluble?</small><b id="c-name"></b><span class="fml" id="c-fml"></span></div>
+          <span class="side r" id="side-r">Insoluble</span>
+        </div>
+        <p class="swipe-help">Swipe the card, tap a button, or use ← → keys</p>
+        <div class="choices" style="margin-top:12px">
+          <button class="choice sol" type="button" id="btn-sol">← Soluble</button>
+          <button class="choice ins" type="button" id="btn-ins">Insoluble →</button>
+        </div>
+        <div style="display:flex;justify-content:center;margin-top:14px"><button class="btn small alt" id="btn-hint" type="button">💡 Show the rules</button></div>
+      </div>
+      <div class="feedback" id="fb" hidden aria-live="assertive">
+        <h3 id="fb-title"></h3>
+        <p id="fb-ans"></p>
+        <p class="why" id="fb-why"></p>
+        <p style="font-size:.85rem;color:var(--muted)">The clock is paused while you read.</p>
+        <button class="btn teal" id="btn-next" type="button">Got it → keep going</button>
+      </div>
+      <div class="rules-panel" id="rules-panel" hidden>
+        <h3>Solubility rules <button class="btn small alt" id="btn-hide-rules" type="button">Close</button></h3>
+        <div class="rules" id="rules-play"></div>
+      </div>
+    </div>
+  </section>
 
-        const rulesList = [
-            { text: "All Group 1 & Ammonium are SOLUBLE", color: "green" },
-            { text: "All Nitrates are SOLUBLE", color: "green" },
-            { text: "Chlorides: soluble except AgCl, PbCl₂", color: "yellow" },
-            { text: "Sulfates: soluble except BaSO₄, CaSO₄, PbSO₄", color: "yellow" },
-            { text: "Carbonates: INSOLUBLE except Grp 1 & ammonium", color: "red" },
-            { text: "Oxides/Hydroxides: INSOLUBLE except Grp 1 & ammonium, and some Grp 2 (Mg, Ca)", color: "red" }
-        ];
+  <!-- RESULTS -->
+  <section id="scr-result" class="results" hidden>
+    <div class="card res-hero span">
+      <div class="big-ring" id="res-ring"><span id="res-pct">0%</span></div>
+      <div><h2 id="res-title"></h2><p id="res-msg"></p></div>
+    </div>
+    <div class="stats span">
+      <div class="stat"><span>Correct</span><b id="res-correct">0/0</b></div>
+      <div class="stat"><span>Accuracy</span><b id="res-acc">0%</b></div>
+      <div class="stat"><span>Best combo</span><b id="res-combo">0</b></div>
+      <div class="stat"><span>Points</span><b id="res-points">0</b></div>
+    </div>
+    <div class="card panel">
+      <h3>How you did by rule</h3>
+      <div class="bars" id="res-bars"></div>
+      <h3 style="margin-top:6px">What to work on</h3>
+      <ul class="weak" id="res-weak"></ul>
+    </div>
+    <div class="card panel"><h3>Check your mistakes</h3><ul class="review" id="res-review"></ul></div>
+    <div class="send span" id="send" aria-live="polite"><span id="send-msg">Sending your results to Ms Khoo…</span><button class="btn small alt" id="btn-resend" type="button" hidden>Try again</button></div>
+    <div class="res-actions span">
+      <button class="btn big teal" id="btn-home" type="button">Home</button>
+      <button class="btn big" id="btn-again" type="button">Play again ↻</button>
+    </div>
+  </section>
+</main>
+<footer>Created by Ms Khoo Xiang Yun · <a href="https://scienceiskhool.github.io/scienceiskhool/" target="_blank" rel="noopener">Science is Khool</a></footer>
+<canvas id="confetti" hidden></canvas>
 
-        let points = 0;
-        let streak = 0;
-        let correctCount = 0;
-        let totalCount = 0;
-        let timeLeft = 60;
-        let currentSalt = null;
-        let timer = null;
-        let muted = false;
-        let audioCtx = null;
-        let highScore = localStorage.getItem('solubility_highscore') || 0;
+<script>
+(function () {
+"use strict";
 
-        function init() {
-            lucide.createIcons();
-            populateRules('start-rules-list');
-            populateRules('rules-modal-list');
-        }
+/* =================== SETTINGS (safe to edit) =================== */
+var SUBMIT_URL = "https://script.google.com/macros/s/AKfycbxCTjRCQzLlWXmmY-5R0p75WCmeFLzC9ZM3gNbGRXpcc_d9qHMXdyCn12B4dHpnrBWe/exec";
+var SHEET_TAB = "Solubility";               // tab name in your Google Sheet
+var ACTIVITY = "Solubility 60s challenge";  // shows in the "Chapter" column
+var SECONDS = 60;
+var CLASSES = [];
+["S1", "S2", "S3", "S4"].forEach(function (l) { ["Charity", "Courage", "Faith", "Hope", "Humility", "Integrity", "Love", "Respect", "Joy"].forEach(function (v) { CLASSES.push(l + " " + v); }); });
+CLASSES.push("S5 Faith", "Other");
 
-        function toggleFullscreen() {
-            const elem = document.documentElement;
-            const icon = document.getElementById('fs-icon');
-            if (!document.fullscreenElement) {
-                elem.requestFullscreen().catch(err => {
-                    console.error(`Error attempting to enable full-screen mode: ${err.message}`);
-                });
-                icon.setAttribute('data-lucide', 'minimize');
-            } else {
-                document.exitFullscreen();
-                icon.setAttribute('data-lucide', 'maximize');
-            }
-            lucide.createIcons();
-        }
+/* =================== RULES =================== */
+var RULES = [
+  { k: "g1", c: "s", tag: "Always", text: "All Group 1 (e.g. sodium, potassium) and ammonium compounds are soluble." },
+  { k: "nitrate", c: "s", tag: "Always", text: "All nitrates are soluble." },
+  { k: "chloride", c: "m", tag: "Mostly", text: "Chlorides are soluble, except silver chloride and lead(II) chloride." },
+  { k: "sulfate", c: "m", tag: "Mostly", text: "Sulfates are soluble, except barium, calcium and lead(II) sulfate." },
+  { k: "carbonate", c: "i", tag: "Mostly not", text: "Carbonates are insoluble, except Group 1 and ammonium carbonates." },
+  { k: "oxide", c: "i", tag: "Mostly not", text: "Oxides and hydroxides are insoluble, except Group 1 and ammonium. Calcium hydroxide is sparingly soluble." }
+];
+var GROUP_NAMES = { g1: "Group 1 & ammonium", nitrate: "Nitrates", chloride: "Chlorides", sulfate: "Sulfates", carbonate: "Carbonates", oxide: "Oxides & hydroxides" };
 
-        function populateRules(elementId) {
-            const container = document.getElementById(elementId);
-            container.innerHTML = '';
-            rulesList.forEach(r => {
-                const div = document.createElement('div');
-                let colorClasses = "";
-                if (r.color === 'green') colorClasses = "bg-green-50 border-green-500 text-green-700";
-                if (r.color === 'yellow') colorClasses = "bg-yellow-50 border-yellow-500 text-yellow-700";
-                if (r.color === 'red') colorClasses = "bg-red-50 border-red-500 text-red-700";
-                
-                div.className = `p-2 border-l-4 text-xs font-bold rounded-r-xl ${colorClasses}`;
-                div.innerText = r.text;
-                container.appendChild(div);
-            });
-        }
+/* =================== COMPOUNDS ===================
+   g: the rule group that decides the answer, s: soluble?  */
+var C = [
+  ["sodium nitrate", "NaNO3", "g1", 1], ["potassium carbonate", "K2CO3", "g1", 1], ["ammonium phosphate", "(NH4)3PO4", "g1", 1],
+  ["lithium hydroxide", "LiOH", "g1", 1], ["sodium hydroxide", "NaOH", "g1", 1], ["potassium iodide", "KI", "g1", 1],
+  ["ammonium carbonate", "(NH4)2CO3", "g1", 1], ["potassium sulfate", "K2SO4", "g1", 1], ["sodium oxide", "Na2O", "g1", 1],
+  ["ammonium sulfate", "(NH4)2SO4", "g1", 1], ["lithium nitrate", "LiNO3", "g1", 1], ["sodium phosphate", "Na3PO4", "g1", 1],
+  ["iron(III) nitrate", "Fe(NO3)3", "nitrate", 1], ["silver nitrate", "AgNO3", "nitrate", 1], ["calcium nitrate", "Ca(NO3)2", "nitrate", 1],
+  ["lead(II) nitrate", "Pb(NO3)2", "nitrate", 1], ["barium nitrate", "Ba(NO3)2", "nitrate", 1],
+  ["silver chloride", "AgCl", "chloride", 0], ["lead(II) chloride", "PbCl2", "chloride", 0], ["barium chloride", "BaCl2", "chloride", 1],
+  ["magnesium chloride", "MgCl2", "chloride", 1], ["copper(II) chloride", "CuCl2", "chloride", 1], ["iron(III) chloride", "FeCl3", "chloride", 1],
+  ["barium sulfate", "BaSO4", "sulfate", 0], ["calcium sulfate", "CaSO4", "sulfate", 0], ["lead(II) sulfate", "PbSO4", "sulfate", 0],
+  ["copper(II) sulfate", "CuSO4", "sulfate", 1], ["magnesium sulfate", "MgSO4", "sulfate", 1], ["zinc sulfate", "ZnSO4", "sulfate", 1], ["iron(II) sulfate", "FeSO4", "sulfate", 1],
+  ["zinc carbonate", "ZnCO3", "carbonate", 0], ["calcium carbonate", "CaCO3", "carbonate", 0], ["copper(II) carbonate", "CuCO3", "carbonate", 0],
+  ["magnesium carbonate", "MgCO3", "carbonate", 0], ["barium carbonate", "BaCO3", "carbonate", 0],
+  ["aluminium oxide", "Al2O3", "oxide", 0], ["lead(II) oxide", "PbO", "oxide", 0], ["zinc oxide", "ZnO", "oxide", 0], ["copper(II) oxide", "CuO", "oxide", 0],
+  ["magnesium hydroxide", "Mg(OH)2", "oxide", 0], ["copper(II) hydroxide", "Cu(OH)2", "oxide", 0], ["iron(II) hydroxide", "Fe(OH)2", "oxide", 0],
+  ["zinc hydroxide", "Zn(OH)2", "oxide", 0], ["calcium hydroxide", "Ca(OH)2", "oxide", 1]
+].map(function (r) { return { name: r[0], f: r[1], g: r[2], s: !!r[3] }; });
 
-        function toggleRules(show) {
-            const modal = document.getElementById('rules-modal');
-            if (show) modal.classList.remove('hidden');
-            else modal.classList.add('hidden');
-        }
+function ruleFor(c) {
+  if (c.g === "g1") return (/^ammonium/.test(c.name) ? "Ammonium" : "Group 1") + " compounds are always soluble.";
+  if (c.g === "nitrate") return "All nitrates are soluble.";
+  if (c.g === "chloride") return c.s ? "Chlorides are soluble. Only silver and lead(II) chloride are insoluble." : "Chlorides are soluble EXCEPT silver chloride and lead(II) chloride.";
+  if (c.g === "sulfate") return c.s ? "Sulfates are soluble. Only barium, calcium and lead(II) sulfate are insoluble." : "Sulfates are soluble EXCEPT barium, calcium and lead(II) sulfate.";
+  if (c.g === "carbonate") return "Carbonates are insoluble, unless they are Group 1 or ammonium carbonates.";
+  if (c.name === "calcium hydroxide") return "Calcium hydroxide is sparingly soluble, so it counts as soluble (it forms limewater).";
+  return "Oxides and hydroxides are insoluble, unless they are Group 1 or ammonium.";
+}
+var ERR = {
+  "g1":          { label: "Thought a Group 1 or ammonium compound was insoluble", tip: "Look at the first word: sodium, potassium, lithium or ammonium means soluble, whatever the second word." },
+  "nitrate":     { label: "Thought a nitrate was insoluble", tip: "Every nitrate is soluble. No exceptions." },
+  "chloride-0":  { label: "Missed the chloride exceptions", tip: "Silver chloride (AgCl) and lead(II) chloride (PbCl₂) are insoluble." },
+  "chloride-1":  { label: "Thought an ordinary chloride was insoluble", tip: "Chlorides are soluble unless they're silver or lead(II) chloride." },
+  "sulfate-0":   { label: "Missed the sulfate exceptions", tip: "Barium, calcium and lead(II) sulfate are insoluble (BaSO₄, CaSO₄, PbSO₄)." },
+  "sulfate-1":   { label: "Thought an ordinary sulfate was insoluble", tip: "Sulfates are soluble unless they're barium, calcium or lead(II) sulfate." },
+  "carbonate-0": { label: "Thought a carbonate was soluble", tip: "Carbonates are insoluble unless Group 1 or ammonium." },
+  "oxide-0":     { label: "Thought a metal oxide or hydroxide was soluble", tip: "Oxides and hydroxides are insoluble unless Group 1 or ammonium." },
+  "oxide-1":     { label: "Missed that calcium hydroxide is sparingly soluble", tip: "Calcium hydroxide dissolves a little — that's limewater." }
+};
+function errKey(c) { return c.g === "g1" || c.g === "nitrate" ? c.g : c.g + "-" + (c.s ? 1 : 0); }
 
-        function getMultiplierStats(s) {
-            let level = 0;
-            let threshold = 2; 
-            let count = s;
-            while (count >= threshold) {
-                count -= threshold;
-                level++;
-                threshold++;
-            }
-            return {
-                multiplier: (1 + level * 0.5).toFixed(1),
-                percent: (count / threshold) * 100
-            };
-        }
+/* =================== HELPERS =================== */
+var $ = function (id) { return document.getElementById(id); };
+function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function fx(f) { return esc(f).replace(/([A-Za-z\)])(\d+)/g, '$1<span class="sub">$2</span>'); }
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem("sik:" + k)); localStorage.setItem("sik:" + k, JSON.stringify(v)); } catch (e) { return null; } }
+function rulesHtml() { return RULES.map(function (r) { return '<div class="rule ' + r.c + '"><i>' + r.tag + "</i><span>" + esc(r.text) + "</span></div>"; }).join(""); }
 
-        function playSound(type) {
-            if (muted) return;
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            if (audioCtx.state === 'suspended') audioCtx.resume();
+/* combo multiplier (same as the original game: 1.0×, 1.5×, 2.0× … with growing thresholds) */
+function multiplier(streak) {
+  var level = 0, th = 2, n = streak;
+  while (n >= th) { n -= th; level++; th++; }
+  return { m: 1 + level * .5, pct: n / th * 100 };
+}
 
-            if (type === 'fanfare') {
-                [523.25, 659.25, 783.99, 1046.50].forEach((f, i) => {
-                    const osc = audioCtx.createOscillator();
-                    const gain = audioCtx.createGain();
-                    osc.connect(gain); gain.connect(audioCtx.destination);
-                    osc.frequency.setValueAtTime(f, audioCtx.currentTime + i * 0.1);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime + i * 0.1);
-                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.4);
-                    osc.start(audioCtx.currentTime + i * 0.1); osc.stop(audioCtx.currentTime + i * 0.1 + 0.4);
-                });
-            } else if (type === 'gameover') {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.5);
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
-                osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-            } else {
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.connect(gain); gain.connect(audioCtx.destination);
-                if (type === 'correct') {
-                    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.1);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-                } else {
-                    osc.frequency.setValueAtTime(220, audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                    osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-                }
-            }
-        }
+/* =================== SOUND =================== */
+var Sound = {
+  on: store("sfx") !== false, ctx: null,
+  tone: function (f, type, d, g, delay) {
+    if (!this.on) return;
+    try {
+      this.ctx = this.ctx || new (window.AudioContext || window.webkitAudioContext)();
+      if (this.ctx.state === "suspended") this.ctx.resume();
+      var t = this.ctx.currentTime + (delay || 0), o = this.ctx.createOscillator(), v = this.ctx.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t); v.gain.setValueAtTime(g, t); v.gain.exponentialRampToValueAtTime(0.0001, t + d);
+      o.connect(v); v.connect(this.ctx.destination); o.start(t); o.stop(t + d);
+    } catch (e) {}
+  },
+  ok: function () { this.tone(880, "sine", .12, .16); this.tone(1320, "sine", .2, .16, .06); },
+  no: function () { this.tone(220, "sawtooth", .2, .12); this.tone(110, "sawtooth", .35, .12, .05); },
+  end: function () { [523, 659, 784, 1047].forEach(function (n, i) { Sound.tone(n, "triangle", .35, .16, i * .1); }); }
+};
+$("btn-sound").classList.toggle("off", !Sound.on);
+$("btn-sound").addEventListener("click", function () { Sound.on = !Sound.on; store("sfx", Sound.on); $("btn-sound").classList.toggle("off", !Sound.on); });
+if (document.fullscreenEnabled) { $("btn-full").hidden = false; $("btn-full").addEventListener("click", function () { if (document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(function () {}); }); }
 
-        function createConfetti() {
-            const container = document.getElementById('confetti-container');
-            container.classList.remove('hidden');
-            container.innerHTML = '';
-            for (let i = 0; i < 100; i++) {
-                const bit = document.createElement('div');
-                bit.className = 'absolute animate-confetti-fall';
-                bit.style.left = Math.random() * 100 + '%';
-                bit.style.top = '-20px';
-                bit.style.width = (Math.random() * 10 + 5) + 'px';
-                bit.style.height = (Math.random() * 10 + 5) + 'px';
-                bit.style.backgroundColor = ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#3b82f6'][Math.floor(Math.random() * 5)];
-                bit.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                bit.style.animationDelay = (Math.random() * 3) + 's';
-                container.appendChild(bit);
-            }
-        }
+/* =================== START =================== */
+var G = null;
+function show(id) { ["scr-start", "scr-play", "scr-result"].forEach(function (s) { $(s).hidden = s !== id; }); window.scrollTo(0, 0); }
+(function () {
+  $("rules-start").innerHTML = rulesHtml(); $("rules-play").innerHTML = rulesHtml();
+  var sel = $("in-cls");
+  CLASSES.forEach(function (c) { var o = document.createElement("option"); o.textContent = c; sel.appendChild(o); });
+  var s = store("student") || {};
+  if (s.name) $("in-name").value = s.name;
+  if (s.cls && CLASSES.indexOf(s.cls) > -1) sel.value = s.cls;
+  if (s.reg) $("in-reg").value = s.reg;
+  $("txt-best").textContent = store("solubility-best") || 0;
+})();
+$("form-start").addEventListener("submit", function (e) {
+  e.preventDefault();
+  var name = $("in-name").value.trim(), cls = $("in-cls").value, reg = $("in-reg").value.trim();
+  var err = !name ? "Please type your name." : !cls ? "Please choose your class." : !/^\d{1,2}$/.test(reg) ? "Please type your register number (numbers only)." : "";
+  $("form-err").textContent = err; if (err) return;
+  store("student", { name: name, cls: cls, reg: reg });
+  Sound.tone(1, "sine", .01, .0001);
+  startGame({ name: name, cls: cls, reg: reg });
+});
 
-        function startGame() {
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('playing-screen').classList.remove('hidden');
-            nextQuestion();
-            timer = setInterval(() => {
-                timeLeft--;
-                document.getElementById('time-left').innerText = timeLeft;
-                if (timeLeft <= 0) endGame();
-            }, 1000);
-        }
+function startGame(student) {
+  G = { student: student, points: 0, streak: 0, bestStreak: 0, log: [], deck: shuffle(C), hints: 0,
+        used: 0, runningSince: 0, paused: true, busy: false, done: false, raf: null, startedAt: Date.now() };
+  $("bin-sol").innerHTML = ""; $("bin-ins").innerHTML = ""; $("n-sol").textContent = 0; $("n-ins").textContent = 0;
+  $("txt-points").textContent = 0; paintCombo(false);
+  $("fb").hidden = true; $("rules-panel").hidden = true; $("play-main").hidden = false;
+  show("scr-play");
+  nextCard(); resume(); tick();
+}
 
-        function nextQuestion() {
-            document.getElementById('feedback-correct').classList.add('hidden');
-            document.getElementById('feedback-wrong').classList.add('hidden');
-            currentSalt = saltsData[Math.floor(Math.random() * saltsData.length)];
-            document.getElementById('salt-name').innerText = currentSalt.name;
-            document.getElementById('salt-formula').innerText = currentSalt.formula;
-        }
+/* ---- clock with pause ---- */
+function elapsed() { return G.used + (G.paused ? 0 : (performance.now() - G.runningSince) / 1000); }
+function pause() { if (G.paused) return; G.used = elapsed(); G.paused = true; $("txt-paused").hidden = false; }
+function resume() { if (!G.paused) return; G.runningSince = performance.now(); G.paused = false; $("txt-paused").hidden = true; }
+function tick() {
+  if (G.done) return;
+  var left = Math.max(0, SECONDS - elapsed());
+  $("bar-time").style.width = (left / SECONDS * 100) + "%";
+  $("bar-time").classList.toggle("warn", left <= 10);
+  $("txt-secs").textContent = Math.ceil(left) + "s";
+  if (left <= 0) { finish(); return; }
+  G.raf = requestAnimationFrame(tick);
+}
 
-        function handleGuess(guess) {
-            if (timeLeft <= 0) return;
-            totalCount++;
-            const isCorrect = guess === currentSalt.soluble;
-            
-            const historyItem = document.createElement('div');
-            historyItem.className = `p-2 rounded-lg text-[10px] sm:text-xs font-bold border flex justify-between items-center ${isCorrect ? 'bg-white border-green-100' : 'bg-red-50 border-red-200 text-red-700'}`;
-            historyItem.innerHTML = `<span>${currentSalt.name}</span> <i data-lucide="${isCorrect ? 'check-circle' : 'x-circle'}" class="w-3 h-3 ${isCorrect ? 'text-green-500' : 'text-red-500'}"></i>`;
-            document.getElementById(currentSalt.soluble ? 'history-soluble' : 'history-insoluble').prepend(historyItem);
-            lucide.createIcons();
+/* ---- cards ---- */
+function nextCard() {
+  if (!G.deck.length) G.deck = shuffle(C);
+  G.c = G.deck.pop(); G.busy = false;
+  var card = $("scard");
+  card.className = "scard"; card.style.transform = "";
+  $("c-name").textContent = cap(G.c.name); $("c-fml").innerHTML = fx(G.c.f);
+}
+function answer(saidSoluble, fromSwipe, dx) {
+  if (G.busy || G.done || G.paused) return;
+  G.busy = true;
+  var c = G.c, ok = saidSoluble === c.s;
+  G.log.push({ c: c, said: saidSoluble, ok: ok });
+  addToBin(c, ok);
+  var card = $("scard");
+  if (ok) {
+    G.streak++; G.bestStreak = Math.max(G.bestStreak, G.streak);
+    var m = multiplier(G.streak), gained = Math.round(100 * m.m);
+    G.points += gained; $("txt-points").textContent = G.points.toLocaleString();
+    paintCombo(true); Sound.ok(); toast("+" + gained);
+    var dir = saidSoluble ? -1 : 1;
+    card.classList.add("fly"); card.style.transform = "translateX(" + (dir * 520) + "px) rotate(" + (dir * 24) + "deg)";
+    setTimeout(function () { if (!G.done) nextCard(); }, 260);
+  } else {
+    G.streak = 0; paintCombo(false); Sound.no();
+    card.classList.add("back"); card.style.transform = "";
+    setTimeout(function () { card.classList.remove("back"); card.classList.add("shake"); }, 10);
+    pause();
+    $("fb-title").textContent = "Not quite!";
+    $("fb-ans").innerHTML = "<b>" + esc(cap(c.name)) + "</b> (" + fx(c.f) + ") is <b>" + (c.s ? "soluble" : "insoluble") + "</b>.";
+    $("fb-why").textContent = ruleFor(c);
+    $("play-main").hidden = true; $("rules-panel").hidden = true; $("fb").hidden = false;
+    $("btn-next").focus({ preventScroll: true });
+  }
+}
+$("btn-next").addEventListener("click", function () {
+  $("fb").hidden = true; $("play-main").hidden = false;
+  nextCard(); resume();
+});
+function addToBin(c, ok) {
+  var bin = $(c.s ? "bin-sol" : "bin-ins");
+  var t = document.createElement("span"); t.className = "tag" + (ok ? "" : " x"); t.innerHTML = fx(c.f);
+  t.title = c.name; bin.prepend(t);
+  $("n-sol").textContent = $("bin-sol").children.length; $("n-ins").textContent = $("bin-ins").children.length;
+}
+function paintCombo(popIt) {
+  var m = multiplier(G.streak), el = $("txt-combo");
+  el.textContent = m.m.toFixed(1) + "×"; $("bar-combo").style.width = m.pct + "%";
+  if (popIt && G.streak && multiplier(G.streak - 1).m !== m.m) { el.classList.remove("pop"); void el.offsetWidth; el.classList.add("pop"); }
+}
+function toast(t) { var el = document.createElement("div"); el.className = "toast"; el.textContent = t; $("arena").appendChild(el); setTimeout(function () { el.remove(); }, 750); }
 
-            if (isCorrect) {
-                correctCount++;
-                streak++;
-                const stats = getMultiplierStats(streak);
-                points += Math.round(100 * parseFloat(stats.multiplier));
-                
-                document.getElementById('points-display').innerText = points.toLocaleString();
-                document.getElementById('multiplier-text').innerText = stats.multiplier + 'x';
-                document.getElementById('multiplier-progress').style.width = stats.percent + '%';
-                document.getElementById('correct-msg').innerText = currentSalt.soluble ? "DisSolved!" : "Solid work!";
-                
-                playSound('correct');
-                document.getElementById('feedback-correct').classList.remove('hidden');
-                setTimeout(() => { if(timeLeft > 0) nextQuestion(); }, 800);
-            } else {
-                streak = 0;
-                document.getElementById('multiplier-text').innerText = '1.0x';
-                document.getElementById('multiplier-progress').style.width = '0%';
-                
-                playSound('wrong');
-                document.getElementById('rule-explanation').innerText = `"${currentSalt.rule}"`;
-                document.getElementById('feedback-wrong').classList.remove('hidden');
-            }
-        }
+$("btn-sol").addEventListener("click", function () { answer(true); });
+$("btn-ins").addEventListener("click", function () { answer(false); });
+document.addEventListener("keydown", function (e) {
+  if (!G || $("scr-play").hidden) return;
+  if (!$("fb").hidden) { if (e.key === "Enter" || e.key === " " || e.key === "ArrowRight" || e.key === "ArrowLeft") { e.preventDefault(); $("btn-next").click(); } return; }
+  if (e.key === "ArrowLeft" || e.key.toLowerCase() === "s") { e.preventDefault(); answer(true); }
+  else if (e.key === "ArrowRight" || e.key.toLowerCase() === "i") { e.preventDefault(); answer(false); }
+});
 
-        function endGame() {
-            clearInterval(timer);
-            const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
-            if (points > highScore) {
-                highScore = points;
-                localStorage.setItem('solubility_highscore', points);
-            }
+/* ---- swipe ---- */
+(function () {
+  var card = $("scard"), startX = null, dx = 0, id = null;
+  card.addEventListener("pointerdown", function (e) {
+    if (!G || G.busy || G.paused) return;
+    startX = e.clientX; dx = 0; id = e.pointerId; card.setPointerCapture(id); card.classList.remove("back", "shake");
+  });
+  card.addEventListener("pointermove", function (e) {
+    if (startX === null || e.pointerId !== id) return;
+    dx = e.clientX - startX;
+    card.style.transform = "translateX(" + dx + "px) rotate(" + (dx / 14) + "deg)";
+    card.classList.toggle("tilt-l", dx < -40); card.classList.toggle("tilt-r", dx > 40);
+    $("side-l").classList.toggle("hot", dx < -40); $("side-r").classList.toggle("hot", dx > 40);
+  });
+  function end(e) {
+    if (startX === null || (e && e.pointerId !== id)) return;
+    startX = null; card.classList.remove("tilt-l", "tilt-r"); $("side-l").classList.remove("hot"); $("side-r").classList.remove("hot");
+    if (Math.abs(dx) > 80) answer(dx < 0, true, dx);
+    else { card.classList.add("back"); card.style.transform = ""; }
+  }
+  card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+})();
 
-            document.getElementById('playing-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-            
-            document.getElementById('final-points').innerText = points.toLocaleString();
-            document.getElementById('final-accuracy').innerText = accuracy + '%';
-            document.getElementById('best-score-display').innerText = highScore.toLocaleString();
+/* ---- rules hint (clock keeps running) ---- */
+$("btn-hint").addEventListener("click", function () { $("rules-panel").hidden = false; G.hints++; $("rules-panel").scrollIntoView({ block: "nearest", behavior: "smooth" }); });
+$("btn-hide-rules").addEventListener("click", function () { $("rules-panel").hidden = true; });
 
-            if (accuracy >= 80) {
-                document.getElementById('result-title').innerText = "Phenomenal!";
-                document.getElementById('result-icon').classList.add('text-amber-500');
-                playSound('fanfare');
-                createConfetti();
-            } else {
-                document.getElementById('result-title').innerText = "Good Effort!";
-                document.getElementById('result-icon').classList.remove('text-amber-500');
-                document.getElementById('result-icon').classList.add('text-slate-300');
-                playSound('gameover');
-            }
-            lucide.createIcons();
-        }
+/* =================== RESULTS =================== */
+function finish() {
+  if (G.done) return; G.done = true; cancelAnimationFrame(G.raf);
+  var log = G.log, total = log.length, correct = log.filter(function (x) { return x.ok; }).length;
+  var pct = total ? Math.round(100 * correct / total) : 0;
+  var byG = {}, errCount = {};
+  log.forEach(function (x) {
+    var b = byG[x.c.g] = byG[x.c.g] || [0, 0]; b[1]++; if (x.ok) b[0]++;
+    if (!x.ok) { var k = errKey(x.c); errCount[k] = (errCount[k] || 0) + 1; }
+  });
+  var errs = Object.keys(errCount).sort(function (a, b) { return errCount[b] - errCount[a]; });
+  if (G.points > (store("solubility-best") || 0)) store("solubility-best", G.points);
 
-        function toggleMute() {
-            muted = !muted;
-            document.getElementById('mute-btn').innerHTML = `<i data-lucide="${muted ? 'volume-x' : 'volume-2'}" class="w-5 h-5"></i>`;
-            lucide.createIcons();
-        }
+  $("res-ring").style.setProperty("--p", pct); $("res-pct").textContent = pct + "%";
+  $("res-correct").textContent = correct + "/" + total; $("res-acc").textContent = pct + "%";
+  $("res-combo").textContent = G.bestStreak; $("res-points").textContent = G.points.toLocaleString();
+  var first = G.student.name.split(" ")[0];
+  $("res-title").textContent = pct >= 80 && total >= 10 ? "Phenomenal, " + first + "!" : pct >= 60 ? "Good effort, " + first + "!" : "Keep practising, " + first + "!";
+  $("res-msg").textContent = "You sorted " + total + " compounds in " + SECONDS + " seconds" + (G.hints ? " and checked the rules " + G.hints + (G.hints > 1 ? " times." : " time.") : ".");
+  $("res-bars").innerHTML = Object.keys(GROUP_NAMES).filter(function (g) { return byG[g]; }).map(function (g) {
+    var v = byG[g], p = Math.round(100 * v[0] / v[1]);
+    return '<div class="bar-row"><span>' + GROUP_NAMES[g] + '</span><div class="bar"><i class="' + (p < 60 ? "low" : "") + '" style="width:' + p + '%"></i></div><span class="n">' + v[0] + "/" + v[1] + "</span></div>";
+  }).join("") || "<p>No answers this round.</p>";
+  $("res-weak").innerHTML = errs.length ? errs.slice(0, 4).map(function (e) { return "<li><b>" + esc(ERR[e].label) + (errCount[e] > 1 ? " ×" + errCount[e] : "") + "</b><span>" + esc(ERR[e].tip) + "</span></li>"; }).join("")
+    : '<li class="good"><b>Nothing to fix this time!</b><span>Try to beat your points score.</span></li>';
+  var wrong = log.filter(function (x) { return !x.ok; });
+  $("res-review").innerHTML = wrong.length ? wrong.map(function (x) {
+    return "<li><b>" + esc(cap(x.c.name)) + "</b> (" + fx(x.c.f) + ')<br><span class="you">You: ' + (x.said ? "soluble" : "insoluble") + '</span> · <span class="key">' + (x.c.s ? "soluble" : "insoluble") + "</span><br><span style=\"color:var(--muted)\">" + esc(ruleFor(x.c)) + "</span></li>";
+  }).join("") : "<li>No mistakes. Well done!</li>";
+  show("scr-result"); Sound.end(); if (pct >= 80 && total >= 10) Confetti.go();
 
-        window.onload = init;
-    </script>
+  var summary = "By rule: " + Object.keys(GROUP_NAMES).filter(function (g) { return byG[g]; }).map(function (g) { return GROUP_NAMES[g].toLowerCase() + " " + byG[g][0] + "/" + byG[g][1]; }).join(", ") +
+    " | Errors: " + (errs.length ? errs.map(function (e) { return ERR[e].label + " x" + errCount[e]; }).join("; ") : "none") +
+    " | Rules checked: " + G.hints + " | Best combo: " + G.bestStreak;
+  var wrongTxt = wrong.map(function (x) { return x.c.name + ": said " + (x.said ? "soluble" : "insoluble"); }).join(" | ");
+  send({ course: SHEET_TAB, chapter: ACTIVITY, name: G.student.name, cls: G.student.cls, reg: G.student.reg,
+    score: correct, total: total, wrong: wrongTxt || "None", time: Math.round((Date.now() - G.startedAt) / 1000), points: G.points, summary: summary });
+}
+function send(payload) {
+  G.payload = payload;
+  var box = $("send"), msg = $("send-msg"), btn = $("btn-resend");
+  box.className = "send span"; btn.hidden = true; msg.textContent = "Sending your results to Ms Khoo…";
+  if (!SUBMIT_URL) { msg.textContent = "Results not sent (no Google Sheet link set up)."; return; }
+  fetch(SUBMIT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" }, body: JSON.stringify(payload) })
+    .then(function () { msg.textContent = "✓ Sent! Ms Khoo has your results."; })
+    .catch(function () { box.className = "send span err"; msg.textContent = "Couldn't send. Check your internet, then tap Try again."; btn.hidden = false; });
+}
+$("btn-resend").addEventListener("click", function () { send(G.payload); });
+$("btn-again").addEventListener("click", function () { Confetti.stop(); startGame(G.student); });
+$("btn-home").addEventListener("click", function () { Confetti.stop(); $("txt-best").textContent = store("solubility-best") || 0; show("scr-start"); });
+
+/* =================== CONFETTI =================== */
+var Confetti = {
+  c: $("confetti"), on: false,
+  go: function () {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    var c = this.c, w = c.width = innerWidth, h = c.height = innerHeight, cols = ["#FF8243", "#FFC0CB", "#FCE883", "#069494"], p = [];
+    c.hidden = false; this.on = true;
+    for (var i = 0; i < 110; i++) p.push({ x: Math.random() * w, y: -Math.random() * h, s: 6 + Math.random() * 8, v: 2 + Math.random() * 3, a: Math.random() * 6, col: cols[i % 4] });
+    var self = this, ctx = c.getContext("2d");
+    (function loop() {
+      if (!self.on) return; ctx.clearRect(0, 0, w, h); var alive = false;
+      p.forEach(function (q) { q.y += q.v; q.a += .08; q.x += Math.sin(q.a) * 1.2; if (q.y < h + 20) alive = true;
+        ctx.save(); ctx.translate(q.x, q.y); ctx.rotate(q.a); ctx.fillStyle = q.col; ctx.strokeStyle = "#1F2A2E"; ctx.lineWidth = 1.5;
+        ctx.fillRect(-q.s / 2, -q.s / 4, q.s, q.s / 2); ctx.strokeRect(-q.s / 2, -q.s / 4, q.s, q.s / 2); ctx.restore(); });
+      if (alive) requestAnimationFrame(loop); else self.stop();
+    })();
+  },
+  stop: function () { this.on = false; this.c.hidden = true; }
+};
+
+window.__sol = { C: C, ruleFor: ruleFor, errKey: errKey, state: function () { return G; } };
+})();
+</script>
 </body>
 </html>
