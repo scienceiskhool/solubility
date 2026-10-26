@@ -284,7 +284,7 @@ var ACTIVITY = "Solubility 60s challenge";  // shows in the "Chapter" column
 var SECONDS = 60;
 var CLASSES = [];
 ["S1", "S2", "S3", "S4"].forEach(function (l) { ["Charity", "Courage", "Faith", "Hope", "Humility", "Integrity", "Love", "Respect", "Joy"].forEach(function (v) { CLASSES.push(l + " " + v); }); });
-CLASSES.push("S5 Faith", "Other");
+CLASSES.push("S5 Faith", "Visitor", "Other");
 
 /* =================== RULES =================== */
 var RULES = [
@@ -392,7 +392,7 @@ function show(id) { ["scr-start", "scr-play", "scr-result"].forEach(function (s)
 $("form-start").addEventListener("submit", function (e) {
   e.preventDefault();
   var name = $("in-name").value.trim(), cls = $("in-cls").value, reg = $("in-reg").value.trim();
-  var err = !name ? "Please type your name." : !cls ? "Please choose your class." : !/^\d{1,2}$/.test(reg) ? "Please type your register number (numbers only)." : "";
+  var err = !name ? "Please type your name." : !cls ? "Please choose your class." : !(cls === "Visitor" || /^\d{1,2}$/.test(reg)) ? "Please type your register number (numbers only)." : "";
   $("form-err").textContent = err; if (err) return;
   store("student", { name: name, cls: cls, reg: reg });
   Sound.tone(1, "sine", .01, .0001);
